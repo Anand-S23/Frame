@@ -7,13 +7,17 @@ const Logo = () => {
     const router = useRouter();
 
     return (
-        <Image
-            src="/images/logo.png"
-            className="md:block hidden cursor-pointer"
-            width="100"
-            height="100"
-            alt="Capsule Logo"
-        />
+        <div className="flex flex-row items-center space-x-4 cursor-pointer">
+            <Image
+                src="/images/logo.png"
+                className="md:block hidden"
+                width="32"
+                height="32"
+                alt=""
+            />
+
+            <h1 className="lg:block hidden text-2xl font-semibold">Frame</h1>
+        </div>
     );
 }
 

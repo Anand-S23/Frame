@@ -7,7 +7,7 @@ import Navbar from '@/components/navbar/Navbar';
 const font = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-    title: 'Capsule',
+    title: 'Frame',
     description: 'Social Media for movie enthusiats to share their creations',
 };
 
