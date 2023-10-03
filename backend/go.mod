@@ -2,4 +2,6 @@ module github.com/Anand-S23/frame
 
 go 1.21.0
 
-require github.com/gorilla/mux v1.8.0 // indirect
+require github.com/gorilla/mux v1.8.0
+
+require github.com/joho/godotenv v1.5.1
