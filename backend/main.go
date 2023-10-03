@@ -1,10 +1,19 @@
 package main
 
-import "github.com/Anand-S23/frame/api"
+import (
+	"net/http"
+    "log"
+	"github.com/gorilla/mux"
+)
 
 func main() {
-    server := api.NewServer(":3000")
-    server.Run()
+    router := mux.NewRouter()
+	router.HandleFunc("/health_check", HandleFunc(checkHealth))
+
+    // TODO: Read value from .env file
+    port := "8080"
+	log.Println("Frame running on port: ", port)
+    http.ListenAndServe(":" + port, router)
 }
 
 
