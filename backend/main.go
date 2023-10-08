@@ -1,22 +1,18 @@
 package main
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"os"
 
+	"github.com/Anand-S23/frame/database"
 	"github.com/gorilla/mux"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
-type Config struct {
-    Port string
-    MongoURI string
-}
+var DB *database.MongoDB
 
-func LoadEnv() *Config {
+func main() {
     port := os.Getenv("Port")
     if port == "" {
         port = "8080"
@@ -27,31 +23,22 @@ func LoadEnv() *Config {
         log.Fatal("MONGODB_URI variable must be specified in env file")
     }
 
-    return &Config {
-        Port: port,
-        MongoURI: mongoURI,
+    dbName := os.Getenv("MONGODB_NAME")
+    if dbName == "" {
+        log.Fatal("MONGODB_NAME variable must be specified in env file")
     }
-}
 
-func main() {
-    cfg := LoadEnv()
-
-    opts := options.Client().ApplyURI(cfg.MongoURI)
-    client, err := mongo.Connect(context.TODO(), opts)
+    db, err := database.InitDB(mongoURI, dbName, []string{"test", "users"}) // TODO: test is temporary need to remove
     if err != nil {
         log.Fatal(err)
     }
-
-    err = client.Ping(context.TODO(), nil)
-    if err != nil {
-        log.Fatal(err)
-    }
+    DB = db
 
     router := mux.NewRouter()
 	router.HandleFunc("/health_check", HandleFunc(checkHealth))
 
-	log.Println("Frame running on port: ", cfg.Port)
-    http.ListenAndServe(":" + cfg.Port, router)
+	log.Println("Frame running on port: ", port)
+    http.ListenAndServe(":" + port, router)
 }
 
 
