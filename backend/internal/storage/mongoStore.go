@@ -1,6 +1,9 @@
 package storage
 
-import "go.mongodb.org/mongo-driver/mongo"
+import (
+	"github.com/Anand-S23/frame/internal/models"
+	"go.mongodb.org/mongo-driver/mongo"
+)
 
 type MongoStore struct {
 	db *mongo.Database
@@ -9,3 +12,11 @@ type MongoStore struct {
 func NewMongoStore(db *mongo.Database) *MongoStore {
     return &MongoStore{db: db}
 }
+
+// Auth // 
+
+func (store *MongoStore) CreateUser(user models.User) error {
+
+    return nil
+}
+

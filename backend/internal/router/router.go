@@ -9,7 +9,7 @@ import (
 
 func NewRouter(c *controller.Controller) *mux.Router {
     router := mux.NewRouter()
-	router.HandleFunc("/health_check", HandleFunc(c.CheckHealth))
+	router.HandleFunc("/ping", HandleFunc(c.Ping))
     return router
 }
 
