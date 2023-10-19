@@ -7,11 +7,15 @@ import (
 )
 
 type Controller struct {
-    store *storage.MongoStore
+    store         *storage.MongoStore
+    jwtSecretKey string
 }
 
-func NewController(store *storage.MongoStore) *Controller {
-    return &Controller{store: store}
+func NewController(store *storage.MongoStore, secretKey string) *Controller {
+    return &Controller {
+        store: store,
+        jwtSecretKey: secretKey,
+    }
 }
 
 func (c *Controller) Ping(w http.ResponseWriter, r *http.Request) error {

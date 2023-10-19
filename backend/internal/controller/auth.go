@@ -3,11 +3,34 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/Anand-S23/frame/internal/models"
 	"github.com/Anand-S23/frame/internal/validators"
+	"github.com/golang-jwt/jwt/v5"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
+
+func createToken(secretKey string, userID string, expDuration time.Duration) (string, error) {
+    token := jwt.New(jwt.GetSigningMethod("HS256"))
+    claims := token.Claims.(jwt.MapClaims)
+    claims["user_id"] = userID
+    claims["exp"] = time.Now().Add(expDuration).Unix()
+
+    return token.SignedString([]byte(secretKey))
+}
+
+func createJWTCookie(token string, expDuration time.Duration) http.Cookie {
+    return http.Cookie {
+        Name: "jwt",
+        Value: token,
+        Expires: time.Now().Add(expDuration),
+        HttpOnly: true,
+        Secure: false, // TODO: Need to dynamically decide this depending on development mode or production
+        Path: "/",
+    }
+}
 
 func (c *Controller) SignUp(w http.ResponseWriter, r *http.Request) error {
     var userData models.UserDto
@@ -19,27 +42,85 @@ func (c *Controller) SignUp(w http.ResponseWriter, r *http.Request) error {
         return WriteJSON(w, http.StatusBadRequest, errMsg)
     }
 
-    errs := validators.AuthValidator(userData, c.store)
-    if len(errs) != 0 {
-        errMsgs := make([]string, 0, 3)
-        for _, err := range errs {
-            errMsgs = append(errMsgs, err.Error())
+    err = validators.AuthValidator(userData, c.store)
+    if err != nil {
+        errMsg := map[string]string {
+            "error": err.Error(),
         }
-
-        return WriteJSON(w, http.StatusBadRequest, map[string][]string {
-            "errors": errMsgs,
-        })
+        return WriteJSON(w, http.StatusBadRequest, errMsg)
     }
 
     hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userData.Password), bcrypt.DefaultCost)
 	if err != nil {
+        return InternalServerError(w)
+	}
+    userData.Password = string(hashedPassword)
+
+    user := models.NewUser(userData)
+    insertResult, err := c.store.CreateUser(user)
+    if err != nil {
+        return InternalServerError(w)
+    }
+    insertedID := insertResult.InsertedID.(primitive.ObjectID).Hex()
+
+    expDuration := time.Hour * 24
+    token, err := createToken(c.jwtSecretKey, insertedID, expDuration)
+    if err != nil {
+        return InternalServerError(w)
+    }
+
+    cookie := createJWTCookie(token, expDuration)
+    http.SetCookie(w, &cookie)
+
+    successMsg := map[string]string {
+        "message": "User created successfully",
+        "userID": insertedID,
+    }
+
+    return WriteJSON(w, http.StatusOK, successMsg)
+}
+
+func (c *Controller) Login(w http.ResponseWriter, r *http.Request) error {
+    var loginData struct {
+        email    string
+        password string
+    }
+    err := json.NewDecoder(r.Body).Decode(&loginData)
+    if err != nil {
         errMsg := map[string]string {
-            "error": "Internal server error, please try again",
+            "error": "Could not parse login data",
+        }
+        return WriteJSON(w, http.StatusBadRequest, errMsg)
+    }
+
+    user := c.store.FindUserByEmail(loginData.email)
+    if user == nil || user.User_ID == "" {
+        errMsg := map[string]string {
+            "error": "Incorrect email or password, please try again",
+        }
+        return WriteJSON(w, http.StatusBadRequest, errMsg)
+    }
+
+    err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginData.password))
+	if err != nil {
+        errMsg := map[string]string {
+            "error": "Incorrect email or password, please try again",
         }
         return WriteJSON(w, http.StatusBadRequest, errMsg)
 	}
 
-    // TODO: Store the user to database
+    expDuration := time.Hour * 24
+    token, err := createToken(c.jwtSecretKey, user.User_ID, expDuration)
+    if err != nil {
+        return InternalServerError(w)
+    }
 
-    return WriteJSON(w, http.StatusOK, "Signed up")
+    cookie := createJWTCookie(token, expDuration)
+    http.SetCookie(w, &cookie)
+
+    successMsg := map[string]string {
+        "message": "User logged in successfully",
+    }
+    return WriteJSON(w, http.StatusOK, successMsg)
 }
+

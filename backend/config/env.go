@@ -9,6 +9,7 @@ type EnvVars struct {
     MONGODB_URI  string
     MONGODB_NAME string
     PORT         string
+    SECRET_KEY   string
 }
 
 func LoadEnv() (*EnvVars, error) {
@@ -27,9 +28,15 @@ func LoadEnv() (*EnvVars, error) {
         return nil, errors.New("MONGODB_NAME not specified")
     }
 
+    secretKey := os.Getenv("SECRET_KEY")
+    if secretKey == "" {
+        return nil, errors.New("SECRET_KEY not specified")
+    }
+
     return &EnvVars {
         MONGODB_URI: mongoURI,
         MONGODB_NAME: dbName,
         PORT: port,
+        SECRET_KEY: secretKey,
     }, nil
 }

@@ -25,7 +25,7 @@ func main() {
     defer database.CloseDB(db)
 
     mongoStore := storage.NewMongoStore(db)
-    controller := controller.NewController(mongoStore)
+    controller := controller.NewController(mongoStore, env.SECRET_KEY)
     router := router.NewRouter(controller)
 
 	log.Println("Frame running on port: ", env.PORT)
