@@ -2,14 +2,18 @@ package middleware
 
 import (
 	"net/http"
+
+	"github.com/Anand-S23/frame/internal/controller"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 func Authentication(next http.Handler, jwtSecretKey string) http.HandlerFunc {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        errMsg := map[string]string {"error": "Unauthorized",}
+
         cookie, err := r.Cookie("jwt")
         if err != nil || cookie.Value == "" {
-            http.Redirect(w, r, "/login", http.StatusSeeOther)
+            controller.WriteJSON(w, http.StatusUnauthorized, errMsg)
             return
         }
 
@@ -18,7 +22,7 @@ func Authentication(next http.Handler, jwtSecretKey string) http.HandlerFunc {
         })
 
         if err != nil || !token.Valid {
-            http.Redirect(w, r, "/login", http.StatusSeeOther)
+            controller.WriteJSON(w, http.StatusUnauthorized, errMsg)
             return
         }
 

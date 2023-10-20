@@ -21,13 +21,13 @@ func createToken(secretKey string, userID string, expDuration time.Duration) (st
     return token.SignedString([]byte(secretKey))
 }
 
-func createJWTCookie(token string, expDuration time.Duration) http.Cookie {
+func createJWTCookie(token string, expDuration time.Duration, secure bool) http.Cookie {
     return http.Cookie {
         Name: "jwt",
         Value: token,
         Expires: time.Now().Add(expDuration),
         HttpOnly: true,
-        Secure: false, // TODO: Need to dynamically decide this depending on development mode or production
+        Secure: secure,
         Path: "/",
     }
 }
@@ -69,7 +69,7 @@ func (c *Controller) SignUp(w http.ResponseWriter, r *http.Request) error {
         return InternalServerError(w)
     }
 
-    cookie := createJWTCookie(token, expDuration)
+    cookie := createJWTCookie(token, expDuration, c.production)
     http.SetCookie(w, &cookie)
 
     successMsg := map[string]string {
@@ -112,7 +112,7 @@ func (c *Controller) Login(w http.ResponseWriter, r *http.Request) error {
         return InternalServerError(w)
     }
 
-    cookie := createJWTCookie(token, expDuration)
+    cookie := createJWTCookie(token, expDuration, c.production)
     http.SetCookie(w, &cookie)
 
     successMsg := map[string]string {

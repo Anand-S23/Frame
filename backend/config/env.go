@@ -6,6 +6,7 @@ import (
 )
 
 type EnvVars struct {
+    PRODUCTION   bool
     MONGODB_URI  string
     MONGODB_NAME string
     PORT         string
@@ -13,10 +14,7 @@ type EnvVars struct {
 }
 
 func LoadEnv() (*EnvVars, error) {
-    port := os.Getenv("PORT")
-    if port == "" {
-        port = "8080"
-    }
+    envMode := os.Getenv("MODE")
 
     mongoURI := os.Getenv("MONGODB_URI")
     if mongoURI == "" {
@@ -28,12 +26,18 @@ func LoadEnv() (*EnvVars, error) {
         return nil, errors.New("MONGODB_NAME not specified")
     }
 
+    port := os.Getenv("PORT")
+    if port == "" {
+        port = "8080"
+    }
+
     secretKey := os.Getenv("SECRET_KEY")
     if secretKey == "" {
         return nil, errors.New("SECRET_KEY not specified")
     }
 
     return &EnvVars {
+        PRODUCTION: (envMode == "production"),
         MONGODB_URI: mongoURI,
         MONGODB_NAME: dbName,
         PORT: port,

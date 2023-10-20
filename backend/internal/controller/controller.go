@@ -7,13 +7,15 @@ import (
 )
 
 type Controller struct {
-    store         *storage.MongoStore
+    store        *storage.MongoStore
+    production   bool
     JwtSecretKey string
 }
 
-func NewController(store *storage.MongoStore, secretKey string) *Controller {
+func NewController(store *storage.MongoStore, secretKey string, production bool) *Controller {
     return &Controller {
         store: store,
+        production: production,
         JwtSecretKey: secretKey,
     }
 }
