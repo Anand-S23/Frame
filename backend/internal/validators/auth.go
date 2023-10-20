@@ -38,7 +38,7 @@ func validateUsername(username string, store *storage.MongoStore) error {
     }
 
     user := store.FindUserByUsername(username)
-    if user == nil {
+    if user != nil {
         return errors.New("User already exsits with that username")
     }
     return nil
@@ -51,7 +51,7 @@ func validateEmail(email string, store *storage.MongoStore) error {
     }
 
     user := store.FindUserByEmail(email)
-    if user == nil {
+    if user != nil {
         return errors.New("User already exsits with that email")
     }
 

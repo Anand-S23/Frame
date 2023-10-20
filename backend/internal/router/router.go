@@ -4,12 +4,20 @@ import (
 	"net/http"
 
 	"github.com/Anand-S23/frame/internal/controller"
+	"github.com/Anand-S23/frame/internal/middleware"
 	"github.com/gorilla/mux"
 )
 
 func NewRouter(c *controller.Controller) *mux.Router {
     router := mux.NewRouter()
 	router.HandleFunc("/ping", HandleFunc(c.Ping))
+
+    //TODO: Remove just for testing
+    router.HandleFunc("/protected", middleware.Authentication(HandleFunc(c.Ping), c.JwtSecretKey))
+
+    router.HandleFunc("/register", HandleFunc(c.SignUp)).Methods("POST")
+    router.HandleFunc("/login", HandleFunc(c.Login)).Methods("POST")
+
     return router
 }
 

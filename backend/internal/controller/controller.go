@@ -8,13 +8,13 @@ import (
 
 type Controller struct {
     store         *storage.MongoStore
-    jwtSecretKey string
+    JwtSecretKey string
 }
 
 func NewController(store *storage.MongoStore, secretKey string) *Controller {
     return &Controller {
         store: store,
-        jwtSecretKey: secretKey,
+        JwtSecretKey: secretKey,
     }
 }
 

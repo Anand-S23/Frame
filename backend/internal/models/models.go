@@ -6,6 +6,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+type LoginDto struct {
+    Email    string
+    Password string
+}
+
 type UserDto struct {
     Username string
     Email    string

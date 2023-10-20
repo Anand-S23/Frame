@@ -64,7 +64,7 @@ func (c *Controller) SignUp(w http.ResponseWriter, r *http.Request) error {
     insertedID := insertResult.InsertedID.(primitive.ObjectID).Hex()
 
     expDuration := time.Hour * 24
-    token, err := createToken(c.jwtSecretKey, insertedID, expDuration)
+    token, err := createToken(c.JwtSecretKey, insertedID, expDuration)
     if err != nil {
         return InternalServerError(w)
     }
@@ -81,10 +81,7 @@ func (c *Controller) SignUp(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (c *Controller) Login(w http.ResponseWriter, r *http.Request) error {
-    var loginData struct {
-        email    string
-        password string
-    }
+    var loginData models.LoginDto
     err := json.NewDecoder(r.Body).Decode(&loginData)
     if err != nil {
         errMsg := map[string]string {
@@ -93,15 +90,15 @@ func (c *Controller) Login(w http.ResponseWriter, r *http.Request) error {
         return WriteJSON(w, http.StatusBadRequest, errMsg)
     }
 
-    user := c.store.FindUserByEmail(loginData.email)
-    if user == nil || user.User_ID == "" {
+    user := c.store.FindUserByEmail(loginData.Email)
+    if user == nil {
         errMsg := map[string]string {
             "error": "Incorrect email or password, please try again",
         }
         return WriteJSON(w, http.StatusBadRequest, errMsg)
     }
 
-    err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginData.password))
+    err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginData.Password))
 	if err != nil {
         errMsg := map[string]string {
             "error": "Incorrect email or password, please try again",
@@ -110,7 +107,7 @@ func (c *Controller) Login(w http.ResponseWriter, r *http.Request) error {
 	}
 
     expDuration := time.Hour * 24
-    token, err := createToken(c.jwtSecretKey, user.User_ID, expDuration)
+    token, err := createToken(c.JwtSecretKey, user.User_ID, expDuration)
     if err != nil {
         return InternalServerError(w)
     }
