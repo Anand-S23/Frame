@@ -1,6 +1,9 @@
-import { fail } from "@sveltejs/kit"
+import { fail, redirect } from "@sveltejs/kit"
 import { z } from "zod"
 import { superValidate } from "sveltekit-superforms/server"
+import axios from "axios"
+
+const registerEndpoint = "http://localhost:8080/register"
 
 const registerSchema = z.object({
     username: z
@@ -20,20 +23,46 @@ const registerSchema = z.object({
 });
 
 export const load = async (event) => {
+    // TODO: Maybe check if they are already logged in here?
 	const form = await superValidate(event, registerSchema);
 	return { form };
 }
 
 export const actions = {
 	default: async (event) => {
-		const form = await superValidate(event, registerSchema);
-		console.log(form);
+		let form = await superValidate(event, registerSchema);
 
 		if (!form.valid) {
 			return fail(400, { form });
 		}
 
-		return { form };
+        await axios.post(registerEndpoint, form.data)
+            .catch((error) => {
+                if (error.response) {
+                    let data = error.response.data;
+                    
+                    if (data.username) {
+                        form.errors.username = new Array();
+                        form.errors.username.push(data.username);
+                    }
+
+                    if (data.email) {
+                        form.errors.email = new Array();
+                        form.errors.email.push(data.email);
+                    }
+
+                    if (data.password) {
+                        form.errors.password = new Array();
+                        form.errors.password.push(data.password);
+                    }
+                }
+            });
+
+        if (form.errors.username || form.errors.email || form.errors.password) {
+            return fail(400, { form });
+        } 
+
+        throw redirect(302, "/");
 	}
 }
 

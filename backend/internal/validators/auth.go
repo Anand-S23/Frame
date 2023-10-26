@@ -9,27 +9,29 @@ import (
 	"github.com/Anand-S23/frame/internal/storage"
 )
 
-func AuthValidator(userData models.UserDto, store *storage.MongoStore) error {
+func AuthValidator(userData models.UserDto, store *storage.MongoStore) map[string]string {
+    errs := make(map[string]string, 3)
+
     err := validateUsername(userData.Username, store)
     if err != nil {
-        return err
+        errs["username"] = err.Error()
     }
 
     err = validateEmail(userData.Email, store)
     if err != nil {
-        return err
+        errs["email"] = err.Error()
     }
 
     err = validatePassword(userData.Password)
     if err != nil {
-        return err
+        errs["password"] = err.Error()
     }
 
-    return nil
+    return errs
 }
 
 func validateUsername(username string, store *storage.MongoStore) error {
-    if len(username) < 5 || len(username) > 15 {
+    if len(username) < 5 || len(username) > 25 {
         return errors.New("Username must be between 5-15 characters long")
     }
 
@@ -41,6 +43,7 @@ func validateUsername(username string, store *storage.MongoStore) error {
     if user != nil {
         return errors.New("User already exsits with that username")
     }
+
     return nil
 }
 
@@ -48,6 +51,10 @@ func validateEmail(email string, store *storage.MongoStore) error {
     _, err := mail.ParseAddress(email)
     if err != nil {
         return errors.New("Email entered is not valid")
+    }
+
+    if len(email) > 64 {
+        return errors.New("Email must be less than 64 characters")
     }
 
     user := store.FindUserByEmail(email)

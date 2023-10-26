@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -42,16 +43,14 @@ func (c *Controller) SignUp(w http.ResponseWriter, r *http.Request) error {
         return WriteJSON(w, http.StatusBadRequest, errMsg)
     }
 
-    err = validators.AuthValidator(userData, c.store)
-    if err != nil {
-        errMsg := map[string]string {
-            "error": err.Error(),
-        }
-        return WriteJSON(w, http.StatusBadRequest, errMsg)
+    authErrs := validators.AuthValidator(userData, c.store)
+    if len(authErrs) != 0 {
+        return WriteJSON(w, http.StatusBadRequest, authErrs)
     }
 
     hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userData.Password), bcrypt.DefaultCost)
 	if err != nil {
+        log.Println("Error hashing the password")
         return InternalServerError(w)
 	}
     userData.Password = string(hashedPassword)
@@ -59,6 +58,7 @@ func (c *Controller) SignUp(w http.ResponseWriter, r *http.Request) error {
     user := models.NewUser(userData)
     insertResult, err := c.store.CreateUser(user)
     if err != nil {
+        log.Println("Error storing the password in the database")
         return InternalServerError(w)
     }
     insertedID := insertResult.InsertedID.(primitive.ObjectID).Hex()
@@ -66,6 +66,7 @@ func (c *Controller) SignUp(w http.ResponseWriter, r *http.Request) error {
     expDuration := time.Hour * 24
     token, err := createToken(c.JwtSecretKey, insertedID, expDuration)
     if err != nil {
+        log.Println("Error creating token")
         return InternalServerError(w)
     }
 
@@ -109,6 +110,7 @@ func (c *Controller) Login(w http.ResponseWriter, r *http.Request) error {
     expDuration := time.Hour * 24
     token, err := createToken(c.JwtSecretKey, user.User_ID, expDuration)
     if err != nil {
+        log.Println("Error creating token")
         return InternalServerError(w)
     }
 

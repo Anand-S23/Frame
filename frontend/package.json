@@ -30,6 +30,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"axios": "^1.5.1",
 		"bits-ui": "^0.8.0",
 		"clsx": "^2.0.0",
 		"lucide-svelte": "^0.289.0",
