@@ -1,12 +1,12 @@
-import { z } from 'zod';
 import { fail } from "@sveltejs/kit"
+import { z } from "zod"
 import { superValidate } from "sveltekit-superforms/server"
 
 const registerSchema = z.object({
     username: z
-        .string({ required_error: 'Name is required' })
+        .string({ required_error: 'Username is required' })
         .min(5, { message: "Username must be at least 5 characters" })
-        .max(25, { message: "Username must be less than 25 characters" })
+        .max(25, { message: "Username must be less than 25" })
         .trim(),
     email: z
         .string({ required_error: 'Email is required' })

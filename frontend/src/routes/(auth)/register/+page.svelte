@@ -1,21 +1,18 @@
-<<<<<<< HEAD
-=======
 <script lang="ts">
-    import { superForm } from 'sveltekit-superforms/client';
-    import type { PageData } from './$types';
-    import { z } from 'zod';
-	import SuperDebug from "sveltekit-superforms/client/SuperDebug.svelte"
+	import { superForm } from "sveltekit-superforms/client"
+	import type { PageData } from "./$types"
+	import { z } from "zod"
 
     import { Input } from "$lib/components/ui/input";
     import { Button } from "$lib/components/ui/button";
 
-    export let data: PageData;
+	export let data: PageData;
 
     const registerSchema = z.object({
         username: z
-            .string({ required_error: 'Name is required' })
+            .string({ required_error: 'Username is required' })
             .min(5, { message: "Username must be at least 5 characters" })
-            .max(25, { message: "Username must be less than 25 characters" })
+            .max(25, { message: "Username must be less than 25" })
             .trim(),
         email: z
             .string({ required_error: 'Email is required' })
@@ -34,37 +31,32 @@
 	})
 </script>
 
-<SuperDebug data={$form} />
-
-<div class="flex flex-col w-full max-w-sm p-5">
-    <form method="POST" use:enhance>
-        <Input 
-            type="text" id="username" name="username" placeholder="Username" bind:value={$form.username} 
+<div class="flex flex-col w-full max-w-md gap-1.5 p-5">
+	<form method="POST" use:enhance>
+		<Input 
+            type="text" id="username" name="username" placeholder="Username" bind:value={$form.username}
             class="mt-2 {$errors.username ? 'border-red-500' : ''}"
         />
-        {#if $errors.username}
-            <p class="text-sm px-2 text-red-500">{$errors.username}</p>
-            { console.log($errors) }
-        {/if}
+		{#if $errors.username}
+            <p class="text-sm text-red-500 mx-2">{$errors.username}</p>
+		{/if}
 
-        <Input 
-            type="email" id="email" name="email" placeholder="Email" bind:value={$form.email} 
+		<Input 
+            type="email" id="email" name="email" placeholder="Email" bind:value={$form.email}
             class="mt-2 {$errors.email ? 'border-red-500' : ''}"
         />
-        {#if $errors.email}
-            <p class="text-sm px-2 text-red-500">{$errors.email}</p>
-        {/if}
+		{#if $errors.email}
+            <p class="text-sm text-red-500 mx-2">{$errors.email}</p>
+		{/if}
 
-        <Input 
-            type="password" id="password" name="password" placeholder="Password" bind:value={$form.password} 
+		<Input 
+            type="password" id="password" name="password" placeholder="Password" bind:value={$form.password}
             class="mt-2 {$errors.password ? 'border-red-500' : ''}"
         />
-        {#if $errors.password}
-            <p class="text-sm px-2 text-red-500">{$errors.password}</p>
-        {/if}
+		{#if $errors.password}
+            <p class="text-sm text-red-500 mx-2">{$errors.password}</p>
+		{/if}
 
-        <Button type="submit" class="mt-2">Submit</Button>
-    </form>
+		<Button type="submit" class="mt-2">Submit</Button>
+	</form>
 </div>
->>>>>>> 12197e4 (Create form for registration in frontend)
-

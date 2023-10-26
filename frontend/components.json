@@ -1,10 +1,6 @@
 {
   "$schema": "https://shadcn-svelte.com/schema.json",
-<<<<<<< HEAD
-  "style": "new-york",
-=======
   "style": "default",
->>>>>>> 12197e4 (Create form for registration in frontend)
   "tailwind": {
     "config": "tailwind.config.js",
     "css": "src/app.css",
