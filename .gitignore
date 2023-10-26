@@ -10,3 +10,4 @@ bin/
 old/
 Notes.md
 
+node_modules/
