@@ -32,7 +32,7 @@
 </script>
 
 <div class="flex flex-col w-full max-w-md gap-1.5 p-5">
-	<form method="POST" use:enhance>
+	<form method="POST" action="?/register" use:enhance>
 		<Input 
             type="text" id="username" name="username" placeholder="Username" bind:value={$form.username}
             class="mt-2 {$errors.username ? 'border-red-500' : ''}"

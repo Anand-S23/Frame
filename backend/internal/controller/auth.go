@@ -30,6 +30,7 @@ func createJWTCookie(token string, expDuration time.Duration, secure bool) http.
         HttpOnly: true,
         Secure: secure,
         Path: "/",
+        SameSite: http.SameSiteStrictMode,
     }
 }
 

@@ -7,23 +7,27 @@
     import { Button } from "$lib/components/ui/button";
 
 	export let data: PageData;
+    export let error: string;
 
     const loginSchema = z.object({
         email: z.string({ required_error: 'Email is required' }),
         password: z.string({ required_error: 'Password is required' }).trim()
     });
 
-	const { form, errors, enhance, constraints } = superForm(data.form, {
+	const { form, errors, enhance, message, constraints } = superForm(data.form, {
 		taintedMessage: "Are you sure you want leave?",
-		validators: loginSchema
+		validators: loginSchema,
+        onError({ result }) {
+            $message = result.error.message;
+        }
 	});
 </script>
 
 <div class="flex flex-col w-full max-w-md gap-1.5 p-5">
-	<form method="POST" use:enhance>
+	<form method="POST" action="?/login" use:enhance>
 		<Input 
             type="email" id="email" name="email" placeholder="Email" bind:value={$form.email}
-            class="mt-2 {$errors.email ? 'border-red-500' : ''}"
+            class="mt-2 {$errors.email || $message ? 'border-red-500' : ''}"
         />
 		{#if $errors.email}
             <p class="text-sm text-red-500 mx-2">{$errors.email}</p>
@@ -31,13 +35,17 @@
 
 		<Input 
             type="password" id="password" name="password" placeholder="Password" bind:value={$form.password}
-            class="mt-2 {$errors.password ? 'border-red-500' : ''}"
+            class="mt-2 {$errors.password || $message ? 'border-red-500' : ''}"
         />
 		{#if $errors.password}
             <p class="text-sm text-red-500 mx-2">{$errors.password}</p>
 		{/if}
 
-		<Button type="submit" class="mt-2">Submit</Button>
+		{#if $message}
+            <p class="text-sm text-red-500 mt-2 mx-2">{$message}</p>
+		{/if}
+
+        <Button type="submit" class="mt-2">Submit</Button>
 	</form>
 </div>
 

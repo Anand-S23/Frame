@@ -1,3 +1,4 @@
+import type { Actions, RequestEvent } from './$types';
 import { fail, redirect } from "@sveltejs/kit"
 import { z } from "zod"
 import { superValidate } from "sveltekit-superforms/server"
@@ -22,14 +23,14 @@ const registerSchema = z.object({
         .trim(),
 });
 
-export const load = async (event) => {
-    // TODO: Maybe check if they are already logged in here?
+export const load = async (event: RequestEvent) => {
+    // TODO: Check if logged in here
 	const form = await superValidate(event, registerSchema);
 	return { form };
 }
 
-export const actions = {
-	default: async (event) => {
+export const actions: Actions = {
+	register: async (event: RequestEvent) => {
 		let form = await superValidate(event, registerSchema);
 
 		if (!form.valid) {
