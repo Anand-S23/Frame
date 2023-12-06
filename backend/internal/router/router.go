@@ -17,6 +17,8 @@ func NewRouter(c *controller.Controller) *mux.Router {
 
     router.HandleFunc("/register", HandleFunc(c.SignUp)).Methods("POST")
     router.HandleFunc("/login", HandleFunc(c.Login)).Methods("POST")
+    router.HandleFunc("/logout", HandleFunc(c.Logout)).Methods("POST")
+    router.HandleFunc("/authenticatedUser", HandleFunc(c.GetAuthenticatedUser)).Methods("POST")
 
     return router
 }

@@ -8,6 +8,7 @@ bin/
 
 # Other
 old/
+frontend.old/
 Notes.md
 
 node_modules/

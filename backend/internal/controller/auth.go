@@ -34,6 +34,18 @@ func createJWTCookie(token string, expDuration time.Duration, secure bool) http.
     }
 }
 
+func createExpiredJWTCookie(secure bool) http.Cookie {
+    return http.Cookie {
+        Name: "jwt",
+        Value: "",
+        Expires: time.Unix(0, 0),
+        HttpOnly: true,
+        Secure: secure,
+        Path: "/",
+        SameSite: http.SameSiteStrictMode,
+    }
+}
+
 func (c *Controller) SignUp(w http.ResponseWriter, r *http.Request) error {
     var userData models.UserDto
     err := json.NewDecoder(r.Body).Decode(&userData)
@@ -122,5 +134,43 @@ func (c *Controller) Login(w http.ResponseWriter, r *http.Request) error {
         "message": "User logged in successfully",
     }
     return WriteJSON(w, http.StatusOK, successMsg)
+}
+
+func (c *Controller) Logout(w http.ResponseWriter, r *http.Request) error {
+    cookie := createExpiredJWTCookie(c.production)
+    http.SetCookie(w, &cookie)
+    return WriteJSON(w, http.StatusOK, "")
+}
+
+func (c *Controller) GetAuthenticatedUser(w http.ResponseWriter, r *http.Request) error {
+    cookie, err := r.Cookie("jwt")
+    if err != nil {
+        return WriteJSON(w, http.StatusUnauthorized, "Authentication token not found")
+    }
+
+    tokenString := cookie.Value
+    token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+        return []byte(c.JwtSecretKey), nil
+    })
+    if err != nil || !token.Valid {
+        return WriteJSON(w, http.StatusUnauthorized, "Invalid authentication token")
+    }
+
+    claims, ok := token.Claims.(jwt.MapClaims)
+    if !ok {
+        return WriteJSON(w, http.StatusUnauthorized, "Invalid token claims")
+    }
+
+    userID, ok := claims["user_id"].(string)
+    if !ok {
+        return WriteJSON(w, http.StatusUnauthorized, "User not found")
+    }
+
+    user := c.store.FindUserByID(userID)
+    if user == nil {
+        return WriteJSON(w, http.StatusUnauthorized, "User not found")
+    }
+
+    return WriteJSON(w, http.StatusOK, user)
 }
 
