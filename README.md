@@ -27,6 +27,15 @@ Note: In order to test out if this is working as expected you can `curl http://l
 <a id="features"></a>
 ## Features
 
+- [ ] Authentication System: Login, Logout, Register
+- [ ] Post Movie: Posting video, which get stored in S3 bucket
+- [ ] Watch Movie: Stream video from S3 bucket
+- [ ] Movie Rating: Allow users to rate on a particular movie watched on a 1-5 scale
+- [ ] Follow System: Abilty of users to follow other users
+- [ ] Post comment: Let users share their thoughts on media or share infromation about thier own movies
+- [ ] Notifcations: Notify users of events that transpired on the platform
+- [ ] Recommendation System: Recomend movies based on other watched movies
+
 <a id="architucture"></a>
 ## Architucture
 
