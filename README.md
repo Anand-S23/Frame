@@ -21,3 +21,4 @@ A site made for enthusiasts for share and watch movies / short films
 <a id="license"></a>
 ## License
 
+Licensed under [MIT License](./LICENSE)
