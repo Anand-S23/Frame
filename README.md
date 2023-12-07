@@ -15,7 +15,7 @@ A site made for enthusiasts for share and watch movies / short films
 Frame uses docker for easy development, docker and docker-compose are pre-requistes. Follow the following steps once the repository is cloned locally:
 
 **For Backend**
-1. Create a `.env` file using example.env as an example
+1. Create a `.env` file using example.env as an base
 2. Run `docker-compose up --build`
 
 Note: In order to test out if this is working as expected you can `curl http://localhost:8080/ping`, where the result should be `pong`
@@ -27,14 +27,14 @@ Note: In order to test out if this is working as expected you can `curl http://l
 <a id="features"></a>
 ## Features
 
-- [ ] Authentication System: Login, Logout, Register
-- [ ] Post Movie: Posting video, which get stored in S3 bucket
-- [ ] Watch Movie: Stream video from S3 bucket
-- [ ] Movie Rating: Allow users to rate on a particular movie watched on a 1-5 scale
-- [ ] Follow System: Abilty of users to follow other users
-- [ ] Post comment: Let users share their thoughts on media or share infromation about thier own movies
-- [ ] Notifcations: Notify users of events that transpired on the platform
-- [ ] Recommendation System: Recomend movies based on other watched movies
+- [ ] **Authentication System:** Login, Logout, Register
+- [ ] **Post Movie:** Posting video, which get stored in S3 bucket
+- [ ] **Watch Movie:** Stream video from S3 bucket
+- [ ] **Movie Rating:** Allow users to rate on a particular movie watched on a 1-5 scale
+- [ ] **Follow System:** Abilty of users to follow other users
+- [ ] **Post comment:** Let users share their thoughts on media or share infromation about thier own movies
+- [ ] **Notifcations:** Notify users of events that transpired on the platform
+- [ ] **Recommendation System:** Recomend movies based on other watched movies
 
 <a id="architucture"></a>
 ## Architucture
@@ -46,7 +46,7 @@ Note: In order to test out if this is working as expected you can `curl http://l
 - Redis (Rate Limiting + Cache)
 - Zod (Input validation)
 - AWS S3 (Storage)
-- TailwindCSS and shadcnUI (Styling)
+- TailwindCSS and ShadcnUI (Styling)
 
 <a id="license"></a>
 ## License
