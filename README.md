@@ -30,6 +30,15 @@ Note: In order to test out if this is working as expected you can `curl http://l
 <a id="architucture"></a>
 ## Architucture
 
+**Technologies Used or Will Use:**
+- Go and Mux Router (Backend)
+- NodeJS and Typescript (Frontend)
+- MongoDB(Database)
+- Redis (Rate Limiting + Cache)
+- Zod (Input validation)
+- AWS S3 (Storage)
+- TailwindCSS and shadcnUI (Styling)
+
 <a id="license"></a>
 ## License
 
