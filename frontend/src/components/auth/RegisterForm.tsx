@@ -30,35 +30,31 @@ const RegisterForm = () => {
             headers: { "Content-Type": "application/json" },
         });
 
-        if (!response.ok) {
-            // TODO: Error handling
-            return;
-        }
+        const resData = await response.json();
 
-        const responseData = await response.json();
-        if (responseData.errors) {
-            const errors = responseData.errors;
-
-            if (errors.username) {
+        if (resData.username || resData.email || resData.password) {
+            if (resData.username) {
                 setError("username", {
                     type: "server", 
-                    message: errors.username
+                    message: resData.username
                 })
             }
 
-            if (errors.email) {
+            if (resData.email) {
                 setError("email", {
                     type: "server", 
-                    message: errors.email
+                    message: resData.email
                 })
             }
 
-            if (errors.password) {
+            if (resData.password) {
                 setError("password", {
                     type: "server", 
-                    message: errors.password
+                    message: resData.password
                 })
             }
+
+            return;
         }
 
         // TODO: potentially go striaght to login
