@@ -57,6 +57,12 @@ const RegisterForm = () => {
             return;
         }
 
+        if (!response.ok) {
+            // TODO: Use toast here instead
+            alert("Server error, please try again");
+            return;
+        }
+
         // TODO: potentially go striaght to login
         // Redirect to homepage
         router.push("/");
