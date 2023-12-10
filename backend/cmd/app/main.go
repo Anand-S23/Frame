@@ -10,6 +10,7 @@ import (
 	"github.com/Anand-S23/frame/internal/database"
 	"github.com/Anand-S23/frame/internal/router"
 	"github.com/Anand-S23/frame/internal/storage"
+	"github.com/gorilla/handlers"
 )
 
 func main() {
@@ -28,7 +29,11 @@ func main() {
     controller := controller.NewController(mongoStore, env.SECRET_KEY, env.PRODUCTION)
     router := router.NewRouter(controller)
 
+    headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
+    originsOk := handlers.AllowedOrigins([]string{env.ORIGIN_ALLOWED})
+    methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+
 	log.Println("Frame running on port: ", env.PORT)
-    http.ListenAndServe(":" + env.PORT, router)
+    http.ListenAndServe(":" + env.PORT, handlers.CORS(headersOk, originsOk, methodsOk)(router))
 }
 
