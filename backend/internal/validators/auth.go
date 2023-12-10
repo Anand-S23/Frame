@@ -22,7 +22,7 @@ func AuthValidator(userData models.UserDto, store *storage.MongoStore) map[strin
         errs["email"] = err.Error()
     }
 
-    err = validatePassword(userData.Password)
+    err = validatePassword(userData.Password, userData.Confirm)
     if err != nil {
         errs["password"] = err.Error()
     }
@@ -65,9 +65,13 @@ func validateEmail(email string, store *storage.MongoStore) error {
     return nil
 }
 
-func validatePassword(password string) error {
+func validatePassword(password string, confirm string) error {
     if len(password) < 8 || len(password) > 30 {
         return errors.New("Password must be between 8 and 30 characters long")
+    }
+
+    if password != confirm {
+        return errors.New("Passwords must match")
     }
 
     return nil
