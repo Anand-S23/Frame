@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const registerSchema = z
+export const RegisterSchema = z
     .object({
         username: z
             .string({ required_error: 'Username is required' })
@@ -25,4 +25,4 @@ export const registerSchema = z
         path: ["confirm"],
     });
 
-export type TRegisterSchema = z.infer<typeof registerSchema>;
+export type TRegisterSchema = z.infer<typeof RegisterSchema>;
