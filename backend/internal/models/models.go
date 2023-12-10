@@ -15,6 +15,7 @@ type UserDto struct {
     Username string
     Email    string
     Password string
+    Confirm  string
 }
 
 type User struct {

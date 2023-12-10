@@ -6,11 +6,12 @@ import (
 )
 
 type EnvVars struct {
-    PRODUCTION   bool
-    MONGODB_URI  string
-    MONGODB_NAME string
-    PORT         string
-    SECRET_KEY   string
+    PRODUCTION     bool
+    MONGODB_URI    string
+    MONGODB_NAME   string
+    PORT           string
+    SECRET_KEY     string
+    ORIGIN_ALLOWED string
 }
 
 func LoadEnv() (*EnvVars, error) {
@@ -36,11 +37,17 @@ func LoadEnv() (*EnvVars, error) {
         return nil, errors.New("SECRET_KEY not specified")
     }
 
+    originAllowed := os.Getenv("ORIGIN_ALLOWED")
+    if originAllowed == "" {
+        return nil, errors.New("ORIGIN_ALLOWED not specified")
+    }
+
     return &EnvVars {
         PRODUCTION: (envMode == "production"),
         MONGODB_URI: mongoURI,
         MONGODB_NAME: dbName,
         PORT: port,
         SECRET_KEY: secretKey,
+        ORIGIN_ALLOWED: originAllowed,
     }, nil
 }
