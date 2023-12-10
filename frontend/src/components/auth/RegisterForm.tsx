@@ -25,6 +25,7 @@ const RegisterForm = () => {
     const onSubmit = async (data: TRegisterSchema) => {
          const response = await fetch(registerEndpoint, {
             method: "POST",
+            mode: "cors",
             body: JSON.stringify(data),
             headers: { "Content-Type": "application/json" },
         });
