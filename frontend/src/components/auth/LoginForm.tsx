@@ -3,24 +3,49 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LoginSchema, TLoginSchema } from "@/lib/types";
-import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
-// const loginEndpoint = "http://localhost:8080/login";
+const loginEndpoint = "http://localhost:8080/login";
 
 const LoginForm = () => {
+    const router = useRouter();
+
     const {
         register,
         handleSubmit,
         formState: { errors },
+        setError
     } = useForm<TLoginSchema>({
         resolver: zodResolver(LoginSchema),
     });
 
     const onSubmit = async (data: TLoginSchema) => {
-        // TODO: Handle login submit
-        console.log(data);
+
+         const response = await fetch(loginEndpoint, {
+            method: "POST",
+            mode: "cors",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" },
+        });
+
+        const resData = await response.json();
+
+        if (!response.ok) {
+            if (resData.error) {
+                setError("root", {
+                    type: "server", 
+                    message: resData.error
+                });
+            }
+
+            return;
+        }
+
+        // Redirect to home upon sucessful login
+        router.push("/");
     }
 
     return (
@@ -29,7 +54,7 @@ const LoginForm = () => {
                 <Input 
                     {...register("email")}
                     type="email" id="email" name="email" placeholder="Email"
-                    className={cn("mt-2", errors.email ? 'border-red-500' : '')}
+                    className={cn("mt-2", errors.email || errors.root ? 'border-red-500' : '')}
                 />
                 { errors.email && (
                     <p className="text-sm text-red-500 mx-2">
@@ -40,11 +65,17 @@ const LoginForm = () => {
                 <Input 
                     {...register("password")}
                     type="password" id="password" name="password" placeholder="Password"
-                    className={cn("mt-2", errors.password ? 'border-red-500' : '')}
+                    className={cn("mt-2", errors.password || errors.root ? 'border-red-500' : '')}
                 />
                 { errors.password && (
                     <p className="text-sm text-red-500 mx-2">
                         {`${errors.password.message}`}
+                    </p>
+                )}
+
+                { errors.root && (
+                    <p className="text-sm text-red-500 mx-2">
+                        {`${errors.root.message}`}
                     </p>
                 )}
 
