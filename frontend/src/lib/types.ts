@@ -26,3 +26,16 @@ export const RegisterSchema = z
     });
 
 export type TRegisterSchema = z.infer<typeof RegisterSchema>;
+
+export const LoginSchema = z
+    .object({
+        email: z
+            .string({ required_error: 'Valid email is required' })
+            .email({ message: 'Valid email is required' }),
+        password: z
+            .string({ required_error: 'Password is required' })
+            .min(1, { message: 'Password is required'})
+            .trim(),
+    });
+
+export type TLoginSchema = z.infer<typeof LoginSchema>;
