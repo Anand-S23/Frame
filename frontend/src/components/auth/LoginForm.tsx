@@ -7,8 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-
-const loginEndpoint = "http://localhost:8080/login";
+import { LOGIN_ENDPOINT } from "@/lib/consts";
 
 const LoginForm = () => {
     const router = useRouter();
@@ -23,12 +22,12 @@ const LoginForm = () => {
     });
 
     const onSubmit = async (data: TLoginSchema) => {
-
-         const response = await fetch(loginEndpoint, {
+         const response = await fetch(LOGIN_ENDPOINT, {
             method: "POST",
             mode: "cors",
             body: JSON.stringify(data),
             headers: { "Content-Type": "application/json" },
+            credentials: 'include'
         });
 
         const resData = await response.json();
