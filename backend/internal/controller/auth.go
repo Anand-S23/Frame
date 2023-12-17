@@ -142,6 +142,12 @@ func (c *Controller) Logout(w http.ResponseWriter, r *http.Request) error {
     return WriteJSON(w, http.StatusOK, "")
 }
 
+// TODO: Only for test purposes
+func (c *Controller) GetAllUsers(w http.ResponseWriter, r *http.Request) error {
+    users := c.store.GetAllUsers()
+    return WriteJSON(w, http.StatusOK, users)
+}
+
 func (c *Controller) GetAuthenticatedUser(w http.ResponseWriter, r *http.Request) error {
     cookie, err := r.Cookie("jwt")
     if err != nil {
