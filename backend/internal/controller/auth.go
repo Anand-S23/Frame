@@ -47,7 +47,7 @@ func createExpiredJWTCookie(secure bool) http.Cookie {
 }
 
 func (c *Controller) SignUp(w http.ResponseWriter, r *http.Request) error {
-    var userData models.UserDto
+    var userData models.RegisterDto
     err := json.NewDecoder(r.Body).Decode(&userData)
     if err != nil {
         errMsg := map[string]string {

@@ -11,7 +11,12 @@ type LoginDto struct {
     Password string
 }
 
-type UserDto struct {
+type LoginResultDto struct {
+    User_ID  string
+    Username string
+}
+
+type RegisterDto struct {
     Username string
     Email    string
     Password string
@@ -30,7 +35,7 @@ type User struct {
 }
 
 
-func NewUser(userData UserDto) User {
+func NewUser(userData RegisterDto) User {
     id := primitive.NewObjectID()
     now, _ := time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 
