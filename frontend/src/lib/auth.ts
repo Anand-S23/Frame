@@ -1,17 +1,24 @@
 import { AUTHENTICATED_USER_ENDPOINT } from "./consts";
 import { UserLoginResult } from "./types";
 
-export const fetchAuthenticatedUser = async () => {
+export const isUserAuthenticated = async () => {
+    let response: Response;
+
     try {
-        const response = await fetch(AUTHENTICATED_USER_ENDPOINT, {
+        response = await fetch(AUTHENTICATED_USER_ENDPOINT, {
             credentials: 'include'
         });
-
-        const data = await response.json();
-        return data as UserLoginResult;
-
     } catch (error) {
         console.error('Error fetching authenticated user:', error);
-        throw error;
+        return false;
     }
+
+    const userData: UserLoginResult = await response.json();
+
+    if (userData && userData.Username !== undefined && userData.User_ID !== undefined) {
+        return true;
+    }
+
+    return false;
 };
+
