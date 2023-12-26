@@ -182,6 +182,7 @@ func (c *Controller) GetAuthenticatedUser(w http.ResponseWriter, r *http.Request
         return WriteJSON(w, http.StatusUnauthorized, "User not found")
     }
 
-    return WriteJSON(w, http.StatusOK, user)
+    userData := models.NewLoginResult(user)
+    return WriteJSON(w, http.StatusOK, userData)
 }
 

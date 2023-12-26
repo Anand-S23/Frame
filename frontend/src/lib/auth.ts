@@ -1,4 +1,5 @@
 import { AUTHENTICATED_USER_ENDPOINT } from "./consts";
+import { UserLoginResult } from "./types";
 
 export const fetchAuthenticatedUser = async () => {
     try {
@@ -6,10 +7,8 @@ export const fetchAuthenticatedUser = async () => {
             credentials: 'include'
         });
 
-        console.log(response);
-
         const data = await response.json();
-        console.log(data);
+        return data as UserLoginResult;
 
     } catch (error) {
         console.error('Error fetching authenticated user:', error);

@@ -34,7 +34,6 @@ type User struct {
     // Avatar  string             `json:"avatar"`
 }
 
-
 func NewUser(userData RegisterDto) User {
     id := primitive.NewObjectID()
     now, _ := time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
@@ -50,4 +49,10 @@ func NewUser(userData RegisterDto) User {
     }
 }
 
+func NewLoginResult(user *User) LoginResultDto {
+    return LoginResultDto {
+        User_ID: user.User_ID,
+        Username: user.Username,
+    }
+}
 
