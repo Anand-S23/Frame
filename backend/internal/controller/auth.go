@@ -169,10 +169,15 @@ func (c *Controller) GetAuthenticatedUser(w http.ResponseWriter, r *http.Request
 
     userID, ok := claims["user_id"].(string)
     if !ok {
-        return WriteJSON(w, http.StatusUnauthorized, "User not found")
+        return WriteJSON(w, http.StatusUnauthorized, "Invlid user id from token claims")
     }
 
-    user := c.store.FindUserByID(userID)
+    objectId, err := primitive.ObjectIDFromHex(userID)
+    if err != nil {
+        return WriteJSON(w, http.StatusUnauthorized, "Invalid user id from token claims")
+    }
+
+    user := c.store.FindUserByID(objectId)
     if user == nil {
         return WriteJSON(w, http.StatusUnauthorized, "User not found")
     }
