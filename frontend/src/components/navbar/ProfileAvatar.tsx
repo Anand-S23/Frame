@@ -10,8 +10,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { LOGOUT_ENDPOINT } from "@/lib/consts";
+import { useRouter } from "next/navigation";
 
 const ProfileAvatar = () => {
+    let router = useRouter();
+    
+    const handleLogout = async () => {
+        await fetch(LOGOUT_ENDPOINT, {
+            method: "POST",
+            credentials: 'include'
+        });
+
+        router.push('/login');
+    }
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -36,7 +49,7 @@ const ProfileAvatar = () => {
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
                     Log out
                 </DropdownMenuItem>
             </DropdownMenuContent>
