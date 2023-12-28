@@ -9,7 +9,7 @@ import (
 	"github.com/Anand-S23/frame/internal/storage"
 )
 
-func AuthValidator(userData models.UserDto, store *storage.MongoStore) map[string]string {
+func AuthValidator(userData models.RegisterDto, store *storage.MongoStore) map[string]string {
     errs := make(map[string]string, 3)
 
     err := validateUsername(userData.Username, store)

@@ -47,7 +47,7 @@ func createExpiredJWTCookie(secure bool) http.Cookie {
 }
 
 func (c *Controller) SignUp(w http.ResponseWriter, r *http.Request) error {
-    var userData models.UserDto
+    var userData models.RegisterDto
     err := json.NewDecoder(r.Body).Decode(&userData)
     if err != nil {
         errMsg := map[string]string {
@@ -142,6 +142,12 @@ func (c *Controller) Logout(w http.ResponseWriter, r *http.Request) error {
     return WriteJSON(w, http.StatusOK, "")
 }
 
+// TODO: Only for test purposes
+func (c *Controller) GetAllUsers(w http.ResponseWriter, r *http.Request) error {
+    users := c.store.GetAllUsers()
+    return WriteJSON(w, http.StatusOK, users)
+}
+
 func (c *Controller) GetAuthenticatedUser(w http.ResponseWriter, r *http.Request) error {
     cookie, err := r.Cookie("jwt")
     if err != nil {
@@ -163,14 +169,20 @@ func (c *Controller) GetAuthenticatedUser(w http.ResponseWriter, r *http.Request
 
     userID, ok := claims["user_id"].(string)
     if !ok {
-        return WriteJSON(w, http.StatusUnauthorized, "User not found")
+        return WriteJSON(w, http.StatusUnauthorized, "Invlid user id from token claims")
     }
 
-    user := c.store.FindUserByID(userID)
+    objectId, err := primitive.ObjectIDFromHex(userID)
+    if err != nil {
+        return WriteJSON(w, http.StatusUnauthorized, "Invalid user id from token claims")
+    }
+
+    user := c.store.FindUserByID(objectId)
     if user == nil {
         return WriteJSON(w, http.StatusUnauthorized, "User not found")
     }
 
-    return WriteJSON(w, http.StatusOK, user)
+    userData := models.NewLoginResult(user)
+    return WriteJSON(w, http.StatusOK, userData)
 }
 

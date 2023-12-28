@@ -7,8 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-
-const registerEndpoint = "http://localhost:8080/register";
+import { REGISTER_ENDPOINT } from "@/lib/consts";
 
 const RegisterForm = () => {
     const router = useRouter();
@@ -23,7 +22,7 @@ const RegisterForm = () => {
     });
 
     const onSubmit = async (data: TRegisterSchema) => {
-         const response = await fetch(registerEndpoint, {
+         const response = await fetch(REGISTER_ENDPOINT, {
             method: "POST",
             mode: "cors",
             body: JSON.stringify(data),

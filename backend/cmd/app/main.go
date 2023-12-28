@@ -29,11 +29,14 @@ func main() {
     controller := controller.NewController(mongoStore, env.SECRET_KEY, env.PRODUCTION)
     router := router.NewRouter(controller)
 
-    allowedOrigins := handlers.AllowedOrigins([]string{env.ORIGIN_ALLOWED})
-    allowedMethods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "OPTIONS"})
-    allowedHeaders := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
+	corsHandler := handlers.CORS(
+        handlers.AllowedOrigins([]string{env.ORIGIN_ALLOWED}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"}),
+		handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
+		handlers.AllowCredentials(),
+	)
 
 	log.Println("Frame running on port: ", env.PORT)
-    http.ListenAndServe(":" + env.PORT, handlers.CORS(allowedOrigins, allowedMethods, allowedHeaders)(router))
+    http.ListenAndServe(":" + env.PORT, corsHandler(router))
 }
 

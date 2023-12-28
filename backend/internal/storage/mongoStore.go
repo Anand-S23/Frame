@@ -6,6 +6,7 @@ import (
 
 	"github.com/Anand-S23/frame/internal/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -27,7 +28,7 @@ func (store *MongoStore) CreateUser(user models.User) (*mongo.InsertOneResult, e
     return usersCollection.InsertOne(ctx, user)
 }
 
-func (store *MongoStore) FindUserByField(field string, value string) *models.User {
+func (store *MongoStore) FindUserByField(field string, value interface{}) *models.User {
     var user models.User
     usersCollection := store.db.Collection("users")
 
@@ -42,8 +43,8 @@ func (store *MongoStore) FindUserByField(field string, value string) *models.Use
     return &user
 }
 
-func (store *MongoStore) FindUserByID(id string) *models.User {
-    return store.FindUserByField("id", id)
+func (store *MongoStore) FindUserByID(id primitive.ObjectID) *models.User {
+    return store.FindUserByField("_id", id)
 }
 
 func (store *MongoStore) FindUserByUsername(username string) *models.User {
@@ -52,5 +53,29 @@ func (store *MongoStore) FindUserByUsername(username string) *models.User {
 
 func (store *MongoStore) FindUserByEmail(email string) *models.User {
     return store.FindUserByField("email", email)
+}
+
+func (store *MongoStore) GetAllUsers() *[]models.User {
+    usersCollection := store.db.Collection("users")
+
+    ctx, cancel := context.WithTimeout(context.Background(), 10 * time.Second)
+    defer cancel()
+
+    cursor, err := usersCollection.Find(ctx, bson.M{})
+	if err != nil {
+        return nil
+	}
+	defer cursor.Close(ctx)
+
+    var users []models.User
+	for cursor.Next(ctx) {
+		var user models.User
+		if err := cursor.Decode(&user); err != nil {
+            return nil
+		}
+		users = append(users, user)
+	}
+
+    return &users
 }
 

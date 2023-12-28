@@ -39,3 +39,9 @@ export const LoginSchema = z
     });
 
 export type TLoginSchema = z.infer<typeof LoginSchema>;
+
+export interface UserLoginResult {
+    User_ID: string;
+    Username: string;
+}
+

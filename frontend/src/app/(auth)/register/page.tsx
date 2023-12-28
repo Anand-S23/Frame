@@ -1,7 +1,12 @@
-import RegisterForm from "@/components/auth/RegisterForm";
+'use client';
 
-export default function Register() {
+import RegisterForm from "@/components/auth/RegisterForm";
+import withoutAuth from "@/hocs/withoutAuth";
+
+function Register() {
     return (
         <RegisterForm />
     );
 }
+
+export default withoutAuth(Register);
