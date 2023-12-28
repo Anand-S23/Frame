@@ -1,7 +1,10 @@
 import LoginForm from "@/components/auth/LoginForm";
+import withoutAuth from "@/hocs/withoutAuth";
 
-export default function Register() {
+function Login() {
     return (
         <LoginForm />
     );
 }
+
+export default withoutAuth(Login);

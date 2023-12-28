@@ -1,8 +1,9 @@
 'use client';
 
 import Navbar from "@/components/navbar/Navbar";
+import withAuth from "@/hocs/withAuth";
 
-export default function Home() {
+function Home() {
     return (
         <>
             <Navbar />
@@ -10,3 +11,4 @@ export default function Home() {
     );
 }
 
+export default withAuth(Home);

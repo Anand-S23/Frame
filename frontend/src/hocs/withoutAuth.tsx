@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { isUserAuthenticated } from '@/lib/auth';
 import { Spinner } from '@/components/ui/spinner';
 
-const withAuth = (WrappedComponent: NextPage) => {
+const withoutAuth = (WrappedComponent: NextPage) => {
     const AuthenticatedComponent: NextPage = (props) => {
         const router = useRouter();
         const [isLoading, setIsLoading] = useState(true);
@@ -14,8 +14,8 @@ const withAuth = (WrappedComponent: NextPage) => {
         useLayoutEffect(() => {
             const checkAuth = async () => {
                 const isAuthenticated = await isUserAuthenticated();
-                if (!isAuthenticated) {
-                    router.push('/login');
+                if (isAuthenticated) {
+                    router.push('/');
                 } else {
                     setIsLoading(false);
                 }
@@ -34,4 +34,4 @@ const withAuth = (WrappedComponent: NextPage) => {
     return AuthenticatedComponent;
 };
 
-export default withAuth;
+export default withoutAuth;

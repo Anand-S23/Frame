@@ -44,7 +44,6 @@ const LoginForm = () => {
         }
 
         // Redirect to home upon sucessful login
-        console.log("Redirecting...")
         router.push("/");
     }
 
